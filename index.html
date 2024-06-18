@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generate UPI QR Code</title>
+    <title>View UPI Payment Details</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -18,51 +18,94 @@
         .container {
             text-align: center;
         }
-        input[type="text"], input[type="number"] {
-            padding: 10px;
-            font-size: 16px;
+        .qr-code-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+        canvas {
             width: 300px;
+            height: 300px;
+            border: 2px solid #091156;
+            border-radius: 8px;
+        }
+        .parameters {
+            margin-top: 20px;
+            display: none;
+        }
+        .parameter-item {
             margin-bottom: 10px;
-        }
-        textarea {
-            padding: 10px;
-            font-size: 16px;
-            width: 300px;
-            height: 100px;
-            margin-bottom: 10px;
-        }
-        button {
-            background-color: #091156;
-            padding: 10px 25px;
-            border: none;
-            color: #ffffff;
-            font-weight: 500;
-            border-radius: 30px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #2b0d68;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>Generate UPI QR Code</h2>
-        <form id="qrForm" action="qr_dis.html" method="get">
-            <input type="text" id="nameInput" name="name" placeholder="Recipient Name" required>
-            <br>
-            <input type="number" id="amountInput" name="amount" placeholder="Amount (INR)" required>
-            <br>
-            <textarea id="noteInput" name="note" placeholder="Note or Description" required></textarea>
-            <br>
-            <button type="submit">Generate QR Code</button>
-        </form>
+        <h2>UPI Payment Details</h2>
+        <div class="qr-code-container">
+            <canvas id="qrcode"></canvas>
+        </div>
+        <div id="details">
+            <p id="name"></p>
+            <p id="amount"></p>
+            <p id="note"></p>
+        </div>
+        <div class="parameters">
+            <h3>URL Parameters:</h3>
+            <div class="parameter-item"><strong>Name:</strong> <span id="paramName"></span></div>
+            <div class="parameter-item"><strong>Amount:</strong> <span id="paramAmount"></span></div>
+            <div class="parameter-item"><strong>Note:</strong> <span id="paramNote"></span></div>
+        </div>
     </div>
 
     <!-- QR Code Generation Library -->
     <script src="https://cdn.jsdelivr.net/npm/qrious"></script>
 
     <!-- JavaScript -->
-   
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Function to get URL parameters
+            function getUrlParameter(name) {
+                name = name.replace(/[[]]/g, '\\$&');
+                var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+                    results = regex.exec(window.location.href);
+                if (!results) return null;
+                if (!results[2]) return '';
+                return decodeURIComponent(results[2].replace(/\+/g, ' '));
+            }
+
+            // Retrieve data from URL parameters
+            var name = getUrlParameter('name');
+            var amount = getUrlParameter('amount');
+            var note = getUrlParameter('note');
+
+            // Display details
+            if (name && amount && note) {
+                document.getElementById('name').textContent = `Recipient Name: ${name}`;
+                document.getElementById('amount').textContent = `Amount: ₹${amount}`;
+                document.getElementById('note').textContent = `Note: ${note}`;
+
+                // Display URL parameters
+                document.getElementById('paramName').textContent = name;
+                document.getElementById('paramAmount').textContent = `₹${amount}`;
+                document.getElementById('paramNote').textContent = note;
+
+                // Generate QR code using retrieved data
+                var qrContainer = document.getElementById('qrcode');
+                var upiId = 'mk5383511@oksbi'; // Replace with your UPI ID
+                var currency = 'INR';
+                var encodedName = encodeURIComponent(name);
+                var encodedNote = encodeURIComponent(note);
+                var paymentURL = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodedName}&am=${amount}&cu=${currency}&tn=${encodedNote}`;
+
+                var qr = new QRious({
+                    element: qrContainer,
+                    value: paymentURL,
+                    size: 300 // Adjust size as needed
+                });
+            } else {
+                // If parameters are missing or invalid, show an error message
+                document.getElementById('details').innerHTML = '<p>Error: Missing or invalid parameters.</p>';
+            }
+        });
+    </script>
 </body>
 </html>
