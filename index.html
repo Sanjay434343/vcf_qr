@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate UPI QR Code</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1a1041;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+        }
+        input[type="text"], input[type="number"] {
+            padding: 10px;
+            font-size: 16px;
+            width: 300px;
+            margin-bottom: 10px;
+        }
+        textarea {
+            padding: 10px;
+            font-size: 16px;
+            width: 300px;
+            height: 100px;
+            margin-bottom: 10px;
+        }
+        button {
+            background-color: #091156;
+            padding: 10px 25px;
+            border: none;
+            color: #ffffff;
+            font-weight: 500;
+            border-radius: 30px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #2b0d68;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Generate UPI QR Code</h2>
+        <form id="qrForm" action="qr_dis.html" method="get">
+            <input type="text" id="nameInput" name="name" placeholder="Recipient Name" required>
+            <br>
+            <input type="number" id="amountInput" name="amount" placeholder="Amount (INR)" required>
+            <br>
+            <textarea id="noteInput" name="note" placeholder="Note or Description" required></textarea>
+            <br>
+            <button type="submit">Generate QR Code</button>
+        </form>
+    </div>
+
+    <!-- QR Code Generation Library -->
+    <script src="https://cdn.jsdelivr.net/npm/qrious"></script>
+
+    <!-- JavaScript -->
+   
+</body>
+</html>
